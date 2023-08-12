@@ -1,17 +1,35 @@
-<script>
+<script lang="ts">
+  import { CreateFolder, GetAllFolders } from "../wailsjs/go/main/App.js";
+  import type { main } from "../wailsjs/go/models";
   import { css } from "../styled-system/css";
-
-  let folders = [
-    { id: 1, name: "Folder 1" },
-    { id: 2, name: "Folder 2" },
-    { id: 3, name: "Folder 3" },
-  ];
+  import { onMount } from "svelte";
 
   let selectedFolder = null;
+
+  let folders: main.Folder[] = [];
 
   function selectFolder(folder) {
     selectedFolder = folder;
   }
+
+  async function getAllFolders(): Promise<main.Folder[]> {
+    return await GetAllFolders();
+  }
+
+  async function createFolder() {
+    console.log("Creating a new folder");
+    const createdFolder: main.Folder = await CreateFolder("new folder");
+    console.log("Created now folder !", createdFolder.name, ". Refreshing...");
+    refreshFolders();
+  }
+
+  function refreshFolders(): void {
+    getAllFolders().then((fetchedFolders) => (folders = fetchedFolders));
+  }
+
+  onMount(() => {
+    refreshFolders();
+  });
 </script>
 
 <div
@@ -32,6 +50,9 @@
   >
     Folders
   </div>
+
+  <button on:click={createFolder}> Create a new folder </button>
+
   <ul class={css({ mt: "2" })}>
     {#each folders as folder}
       <li

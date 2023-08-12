@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Greet } from "../wailsjs/go/main/App.js";
+  import { GetAllFolders, Greet } from "../wailsjs/go/main/App.js";
   import { css } from "../styled-system/css";
   import FolderNavigation from "./FolderNavigation.svelte";
   import FolderContent from "./FolderContent.svelte";
@@ -21,6 +21,7 @@
     maxHeight: '100vh',
     width: '100vw',
     bg: '#282a35',
+    color: 'white'
   })}
 >
   <!-- {#await greet() then n}
