@@ -19,6 +19,7 @@ export namespace main {
 	    }
 	}
 	export class Folder {
+	    id: number;
 	    name: string;
 	    files: File[];
 	
@@ -28,6 +29,7 @@ export namespace main {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
 	        this.name = source["name"];
 	        this.files = this.convertValues(source["files"], File);
 	    }

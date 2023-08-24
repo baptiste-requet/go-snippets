@@ -48,6 +48,15 @@ func (a *App) CreateFolder(name string) Folder {
 	return folder
 }
 
+func (a *App) DeleteFolder(folderID uint) error {
+	result := a.db.Delete(&Folder{}, folderID)
+	if result.Error != nil {
+		return result.Error
+	}
+	log.Println("Deleted folder with ID", folderID)
+	return nil
+}
+
 func (a *App) CreateFile(name, extension, content string, folderID uint) {
 	file := File{Name: name, Extension: extension, Content: content, FolderID: folderID}
 	a.db.Create(&file)
@@ -76,6 +85,7 @@ func (a *App) GetAllFolders() []Folder {
 }
 
 type Folder struct {
+	ID uint `gorm:"primary_key" json:"id"`
 	gorm.Model
 	Name  string `json:"name"`
 	Files []File `json:"files"`

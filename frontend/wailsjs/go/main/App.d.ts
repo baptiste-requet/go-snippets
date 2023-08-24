@@ -6,6 +6,8 @@ export function CreateFile(arg1:string,arg2:string,arg3:string,arg4:number):Prom
 
 export function CreateFolder(arg1:string):Promise<main.Folder>;
 
+export function DeleteFolder(arg1:number):Promise<void>;
+
 export function GetAllFolders():Promise<Array<main.Folder>>;
 
 export function GetFile(arg1:number):Promise<main.File>;

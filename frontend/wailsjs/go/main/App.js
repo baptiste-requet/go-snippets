@@ -10,6 +10,10 @@ export function CreateFolder(arg1) {
   return window['go']['main']['App']['CreateFolder'](arg1);
 }
 
+export function DeleteFolder(arg1) {
+  return window['go']['main']['App']['DeleteFolder'](arg1);
+}
+
 export function GetAllFolders() {
   return window['go']['main']['App']['GetAllFolders']();
 }

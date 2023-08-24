@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CreateFolder, GetAllFolders } from "../wailsjs/go/main/App.js";
+  import { CreateFolder, DeleteFolder, GetAllFolders } from "../wailsjs/go/main/App.js";
   import type { main } from "../wailsjs/go/models";
   import { css } from "../styled-system/css";
   import { onMount } from "svelte";
@@ -7,8 +7,9 @@
   let selectedFolder = null;
 
   let folders: main.Folder[] = [];
-
+ 
   function selectFolder(folder) {
+    console.log('Selecting folder', folder)
     selectedFolder = folder;
   }
 
@@ -25,6 +26,12 @@
 
   function refreshFolders(): void {
     getAllFolders().then((fetchedFolders) => (folders = fetchedFolders));
+  }
+
+  function deleteFolder(folder: main.Folder) {
+    console.log('Deleting folder', folder)
+    DeleteFolder(folder.id)
+    refreshFolders(); 
   }
 
   onMount(() => {
@@ -48,10 +55,13 @@
       fontWeight: "bold",
     })}
   >
-    Folders
+        Folders
   </div>
 
-  <button on:click={createFolder}> Create a new folder </button>
+  <button on:click={createFolder} class={css({
+    color: "white",
+  })}> Create a new folder 
+</button>
 
   <ul class={css({ mt: "2" })}>
     {#each folders as folder}
@@ -61,11 +71,15 @@
           py: "1",
           px: "4",
           bg: { _hover: "#373947" },
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
         })}
         on:click={() => selectFolder(folder)}
         class:font-bold={folder === selectedFolder}
       >
-        {folder.name}
+        <span>{folder.name}</span>
+        <button on:click|stopPropagation={() => deleteFolder(folder)}>X</button>
       </li>
     {/each}
   </ul>
