@@ -13,7 +13,7 @@ type FoldersStore = {
 };
 
 export const folders = ((): FoldersStore => {
-  const { subscribe, set, update } = writable<main.Folder[]>(null);
+  const { subscribe, set, update } = writable<main.Folder[]>([]);
 
   const a = subscribe((v) => v);
 
@@ -60,3 +60,7 @@ export const selectedFolder = ((): FolderStore => {
 })();
 
 export const selectedFile: Writable<main.File> = writable(null);
+
+
+
+// export const localFilesContent: Writable<Set>;
