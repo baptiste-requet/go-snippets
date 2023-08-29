@@ -32,58 +32,73 @@
     minWidth: 0,
   })}
 >
-  <div
-    class={css({
-      py: "0.4rem",
-      px: "0.8rem",
-      w: "100%",
-      color: "text-gray-700",
-      fontWeight: "bold",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-    })}
-  >
-    File Content (title)
-
-    <button
-      on:click={saveFile}
+  {#if $selectedFile === null}
+    <div
       class={css({
-        bgColor: isFileContentDirty ? "blue.500" : "gray.500",
-        _hover: { bgColor: isFileContentDirty ? "blue.700" : "" },
-        color: "white",
+        py: "0.4rem",
+        px: "0.8rem",
+        w: "100%",
+        color: "text-gray-700",
         fontWeight: "bold",
-        pt: "2",
-        pb: "2",
-        pl: "4",
-        pr: "4",
-        ml: "auto",
-        rounded: "rounded",
-        cursor: "pointer",
-        borderRadius: "0.4rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
       })}
-      disabled={!isFileContentDirty}
+    />
+  {:else}
+    <div
+      class={css({
+        py: "0.4rem",
+        px: "0.8rem",
+        w: "100%",
+        color: "text-gray-700",
+        fontWeight: "bold",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      })}
     >
-      Save
-    </button>
-  </div>
+      File Content (title)
 
-  <CodeMirror
-    bind:value={fileContent}
-    on:change={() => (isFileContentDirty = true)}
-    class={css({
-      maxHeight: "100%",
-      flex: 1,
-      overflow: "auto",
-    })}
-    theme={oneDark}
-    lang={javascript()}
-    styles={{
-      "&": {
-        maxWidth: "100%",
-        height: "100%",
+      <button
+        on:click={saveFile}
+        class={css({
+          bgColor: isFileContentDirty ? "blue.500" : "gray.500",
+          _hover: { bgColor: isFileContentDirty ? "blue.700" : "" },
+          color: "white",
+          fontWeight: "bold",
+          pt: "2",
+          pb: "2",
+          pl: "4",
+          pr: "4",
+          ml: "auto",
+          rounded: "rounded",
+          cursor: "pointer",
+          borderRadius: "0.4rem",
+        })}
+        disabled={!isFileContentDirty}
+      >
+        Save
+      </button>
+    </div>
+
+    <CodeMirror
+      bind:value={fileContent}
+      on:change={() => (isFileContentDirty = true)}
+      class={css({
         maxHeight: "100%",
-      },
-    }}
-  />
+        flex: 1,
+        overflow: "auto",
+      })}
+      theme={oneDark}
+      lang={javascript()}
+      styles={{
+        "&": {
+          maxWidth: "100%",
+          height: "100%",
+          maxHeight: "100%",
+        },
+      }}
+    />
+  {/if}
 </div>

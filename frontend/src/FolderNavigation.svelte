@@ -52,7 +52,7 @@
       alignItems: "center",
     })}
   >
-    <span class={css({ flex: 1 })}>Folders</span>
+    <span>Folders</span>
 
     <button
       on:click={createFolder}
@@ -60,6 +60,7 @@
         _hover: { bg: "gray.700" },
         py: "0.1rem",
         px: "0.2rem",
+        ml: "auto",
         cursor: "pointer",
         borderRadius: "0.4rem",
       })}

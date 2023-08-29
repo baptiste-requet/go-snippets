@@ -37,6 +37,9 @@
       if (get(selectedFile)?.folderId !== folder.id && files?.length > 0) {
         console.log("selecting file", files[0], "previous", get(selectedFile));
         selectedFile.set(files[0]);
+      } else if (folder.files.find(file => file.id === get(selectedFile)?.id) === null) {
+        console.log('Selected file to null')
+        selectedFile.set(null);
       }
     });
   });
@@ -54,14 +57,14 @@
     class={css({
       py: "2px",
       px: "4px",
-      w: "16rem",
+      w: "100%",
       color: "text-gray-700",
       fontWeight: "bold",
       display: "flex",
       alignItems: "center",
     })}
   >
-    <span class={css({ flex: 1 })}>Files</span>
+    <span>Files</span>
 
     <button
       on:click={createFile}
@@ -71,6 +74,7 @@
         px: "0.2rem",
         cursor: "pointer",
         borderRadius: "0.4rem",
+        ml: "auto"
       })}
     >
       <IconAdd />
