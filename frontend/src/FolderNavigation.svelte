@@ -26,11 +26,6 @@
 
   onMount(async () => {
     await folders.refresh();
-
-    if (get(folders).length > 0) {
-      console.log("selecting", get(folders)[0]);
-      selectedFolder.set(get(folders)[0]);
-    }
   });
 </script>
 

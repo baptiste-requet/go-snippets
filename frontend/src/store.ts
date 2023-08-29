@@ -42,23 +42,30 @@ type FolderStore = {
 export const selectedFolder = ((): FolderStore => {
   const { subscribe, set, update } = writable<main.Folder>(null);
 
-  folders.subscribe((folders) => {
-    if (folders === null || folders.length === 0 || get(selectedFolder) === null) {
-      return;
-    }
-    console.log("updating selected folder")
-    selectedFolder.update(v => folders.find(f => f.id === get(selectedFolder).id));
-  });
-
   return {
     subscribe,
     set,
-    update
+    update,
   };
 })();
 
+folders.subscribe((folders) => {
+  console.log('folders updated..')
+  if (selectedFolder === null) {
+    console.log('selectedFolder === null')
+    return;
+  } else if (folders === null || folders.length === 0) {
+    console.log('folders === null || folders.length === 0')
+    selectedFolder.set(null);
+  } else if (folders.length > 0 && get(selectedFolder) === null) {
+    console.log("init selected folder");
+    selectedFolder.set(folders[0]);
+  } else {
+    console.log("updating selected folder");
+    selectedFolder.set(folders.find((f) => f.id === get(selectedFolder).id));
+  }
+});
+
 export const selectedFile: Writable<main.File> = writable(null);
-
-
 
 // export const localFilesContent: Writable<Set>;

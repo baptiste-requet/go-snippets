@@ -27,7 +27,7 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
 	var err error
-	a.db, err = gorm.Open("sqlite3", "snippets_data.db")
+	a.db, err = gorm.Open("sqlite3", "snippets_data.db") // TODO: in appdata/ somewhere hidden
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -63,12 +63,19 @@ func (a *App) GetAllFolders() []Folder {
 }
 
 func (a *App) DeleteFolder(folderID uint) error {
+	err := a.DeleteFilesByFolderID(folderID)
+	if err != nil {
+		return err
+	}
+
 	result := a.db.Delete(&Folder{}, folderID)
 	if result.Error != nil {
 		return result.Error
 	}
+
 	log.Println("Deleted folder with ID", folderID)
 	return nil
+	// TODO delete all files in folder
 }
 
 func (a *App) CreateFile(name, extension, content string, folderID uint) {
@@ -92,6 +99,15 @@ func (a *App) DeleteFile(fileID uint) error {
 	return nil
 }
 
+func (a *App) DeleteFilesByFolderID(folderID uint) error {
+	result := a.db.Where("folder_id = ?", folderID).Delete(File{})
+	if result.Error != nil {
+		return result.Error
+	}
+	log.Println("Deleted files by folder ID", folderID)
+	return nil
+}
+
 func (a *App) UpdateFile(id uint, name, extension, content string, folderID uint) {
 	var file File
 	a.db.First(&file, id)
@@ -99,6 +115,13 @@ func (a *App) UpdateFile(id uint, name, extension, content string, folderID uint
 	file.Extension = extension
 	file.Content = content
 	file.FolderID = folderID
+	a.db.Save(&file)
+}
+
+func (a *App) UpdateFileContent(id uint, content string) {
+	var file File
+	a.db.First(&file, id)
+	file.Content = content
 	a.db.Save(&file)
 }
 

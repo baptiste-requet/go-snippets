@@ -26,6 +26,8 @@
   onMount(async () => {
     selectedFolder.subscribe((folder) => {
       if (folder === null) {
+        files = [];
+        selectedFile.set(null);
         return;
       }
 
@@ -80,7 +82,7 @@
     </button>
   </div>
   <ul class={css({ mt: "2" })}>
-    {#if $selectedFile !== null && files && files.length > 0}
+    {#if $selectedFile !== null && files.length > 0}
       {#each files as file}
         <li
           class={css({
@@ -97,22 +99,6 @@
           })}
           on:click={() => selectFile(file)}
         >
-          <!-- <div
-            class={css({ flex: 1 })}
-            on:dblclick={(evt) => handleDblClickOnFileName(evt, file)}
-            on:keydown={handleKeydownOnFileName}
-            contenteditable={file.id === editableFile?.id}
-          >
-            {file.name}
-          </div>
-          <button
-            on:click|stopPropagation={() => deleteFile(file)}
-            class={css({
-              cursor: "pointer",
-            })}
-          >
-            <IconClose />
-          </button> -->
           <FileEntry {file} />
         </li>
       {/each}

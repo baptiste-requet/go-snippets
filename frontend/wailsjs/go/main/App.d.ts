@@ -8,6 +8,8 @@ export function CreateFolder(arg1:string):Promise<main.Folder>;
 
 export function DeleteFile(arg1:number):Promise<void>;
 
+export function DeleteFilesByFolderID(arg1:number):Promise<void>;
+
 export function DeleteFolder(arg1:number):Promise<void>;
 
 export function GetAllFolders():Promise<Array<main.Folder>>;
