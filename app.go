@@ -102,6 +102,13 @@ func (a *App) UpdateFile(id uint, name, extension, content string, folderID uint
 	a.db.Save(&file)
 }
 
+func (a *App) UpdateFileName(id uint, name string) {
+	var file File
+	a.db.First(&file, id)
+	file.Name = name
+	a.db.Save(&file)
+}
+
 type Model struct {
 	ID        uint `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time

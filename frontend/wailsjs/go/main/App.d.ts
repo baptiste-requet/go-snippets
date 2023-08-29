@@ -19,3 +19,5 @@ export function GetFolder(arg1:number):Promise<main.Folder>;
 export function Greet(arg1:string):Promise<string>;
 
 export function UpdateFile(arg1:number,arg2:string,arg3:string,arg4:string,arg5:number):Promise<void>;
+
+export function UpdateFileName(arg1:number,arg2:string):Promise<void>;

@@ -1,12 +1,12 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+  import { get } from "svelte/store";
   import type { main } from "wailsjs/go/models.js";
   import IconAdd from "~icons/material-symbols/add";
-  import IconClose from "~icons/material-symbols/close";
   import { css } from "../styled-system/css";
-  import { CreateFile, DeleteFile } from "../wailsjs/go/main/App.js";
+  import { CreateFile } from "../wailsjs/go/main/App.js";
+  import FileEntry from "./FileEntry.svelte";
   import { folders, selectedFile, selectedFolder } from "./store.js";
-  import { onDestroy, onMount } from "svelte";
-  import { get } from "svelte/store";
 
   let files: main.File[] = [];
 
@@ -21,11 +21,6 @@
     folders.refresh();
   }
 
-  function deleteFile(file: main.File) {
-    DeleteFile(file.id);
-    folders.refresh();
-  }
-
   onMount(async () => {
     selectedFolder.subscribe((folder) => {
       if (folder === null) {
@@ -37,8 +32,10 @@
       if (get(selectedFile)?.folderId !== folder.id && files?.length > 0) {
         console.log("selecting file", files[0], "previous", get(selectedFile));
         selectedFile.set(files[0]);
-      } else if (folder.files.find(file => file.id === get(selectedFile)?.id) === null) {
-        console.log('Selected file to null')
+      } else if (
+        folder.files.find((file) => file.id === get(selectedFile)?.id) === null
+      ) {
+        console.log("Selected file to null");
         selectedFile.set(null);
       }
     });
@@ -74,7 +71,7 @@
         px: "0.2rem",
         cursor: "pointer",
         borderRadius: "0.4rem",
-        ml: "auto"
+        ml: "auto",
       })}
     >
       <IconAdd />
@@ -98,7 +95,14 @@
           })}
           on:click={() => selectFile(file)}
         >
-          <span>{file.name}</span>
+          <!-- <div
+            class={css({ flex: 1 })}
+            on:dblclick={(evt) => handleDblClickOnFileName(evt, file)}
+            on:keydown={handleKeydownOnFileName}
+            contenteditable={file.id === editableFile?.id}
+          >
+            {file.name}
+          </div>
           <button
             on:click|stopPropagation={() => deleteFile(file)}
             class={css({
@@ -106,7 +110,8 @@
             })}
           >
             <IconClose />
-          </button>
+          </button> -->
+          <FileEntry file={file} />
         </li>
       {/each}
     {:else}
