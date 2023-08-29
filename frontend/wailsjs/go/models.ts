@@ -1,6 +1,7 @@
 export namespace main {
 	
 	export class File {
+	    id: number;
 	    name: string;
 	    extension: string;
 	    content: string;
@@ -12,6 +13,7 @@ export namespace main {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
 	        this.name = source["name"];
 	        this.extension = source["extension"];
 	        this.content = source["content"];

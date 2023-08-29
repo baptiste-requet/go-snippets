@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -26,11 +27,12 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
 	var err error
-	a.db, err = gorm.Open("sqlite3", "snippets.db")
+	a.db, err = gorm.Open("sqlite3", "snippets_data.db")
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
+	a.db.LogMode(true)
 
 	// Migrate the schema
 	a.db.AutoMigrate(&Folder{}, &File{})
@@ -48,6 +50,18 @@ func (a *App) CreateFolder(name string) Folder {
 	return folder
 }
 
+func (a *App) GetFolder(folderID uint) Folder {
+	var folder Folder
+	a.db.Preload("Files").Find(&folder, folderID)
+	return folder
+}
+
+func (a *App) GetAllFolders() []Folder {
+	var folders []Folder
+	a.db.Preload("Files").Find(&folders)
+	return folders
+}
+
 func (a *App) DeleteFolder(folderID uint) error {
 	result := a.db.Delete(&Folder{}, folderID)
 	if result.Error != nil {
@@ -60,12 +74,22 @@ func (a *App) DeleteFolder(folderID uint) error {
 func (a *App) CreateFile(name, extension, content string, folderID uint) {
 	file := File{Name: name, Extension: extension, Content: content, FolderID: folderID}
 	a.db.Create(&file)
+	log.Println("Created file", name, extension, folderID)
 }
 
 func (a *App) GetFile(id uint) File {
 	var file File
 	a.db.First(&file, id)
 	return file
+}
+
+func (a *App) DeleteFile(fileID uint) error {
+	result := a.db.Delete(&File{}, fileID)
+	if result.Error != nil {
+		return result.Error
+	}
+	log.Println("Deleted file with ID", fileID)
+	return nil
 }
 
 func (a *App) UpdateFile(id uint, name, extension, content string, folderID uint) {
@@ -78,21 +102,20 @@ func (a *App) UpdateFile(id uint, name, extension, content string, folderID uint
 	a.db.Save(&file)
 }
 
-func (a *App) GetAllFolders() []Folder {
-	var folders []Folder
-	a.db.Find(&folders)
-	return folders
+type Model struct {
+	ID        uint `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
 }
-
 type Folder struct {
-	ID uint `gorm:"primary_key" json:"id"`
-	gorm.Model
+	Model
 	Name  string `json:"name"`
 	Files []File `json:"files"`
 }
 
 type File struct {
-	gorm.Model
+	Model
 	Name      string `json:"name"`
 	Extension string `json:"extension"`
 	Content   string `json:"content"`

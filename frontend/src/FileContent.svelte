@@ -3,29 +3,11 @@
   import CodeMirror from "svelte-codemirror-editor";
   import { javascript } from "@codemirror/lang-javascript";
   import { oneDark } from "@codemirror/theme-one-dark";
+  import { selectedFile } from "./store";
 
-  let selectedFile = 1;
+  let fileContent: string = "";
+  selectedFile.subscribe(selectedFile => fileContent = selectedFile?.content || "")
 
-  // Sample file contents
-  let fileContents = [
-    {
-      fileId: 1,
-      content: "This is the content of File 1",
-    },
-    {
-      fileId: 2,
-      content: "This is the content of File 2",
-    },
-    {
-      fileId: 3,
-      content: "This is the content of File 3",
-    },
-  ];
-
-  $: selectedFileContent =
-    fileContents.find((file) => file.fileId === selectedFile)?.content || "";
-
-  let value = "blabla".repeat(50) + "blabla\n".repeat(50);
 </script>
 
 <div
@@ -50,7 +32,7 @@
   </div>
   
   <CodeMirror
-    bind:value
+    value={fileContent}
     class={css({
       maxHeight: "100%",
       flex: 1,

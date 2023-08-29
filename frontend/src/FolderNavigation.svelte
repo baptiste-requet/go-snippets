@@ -1,41 +1,36 @@
 <script lang="ts">
-  import { CreateFolder, DeleteFolder, GetAllFolders } from "../wailsjs/go/main/App.js";
-  import type { main } from "../wailsjs/go/models";
-  import { css } from "../styled-system/css";
   import { onMount } from "svelte";
+  import { get } from "svelte/store";
+  import IconAdd from "~icons/material-symbols/add";
+  import IconClose from "~icons/material-symbols/close";
+  import { css } from "../styled-system/css";
+  import { CreateFolder, DeleteFolder } from "../wailsjs/go/main/App.js";
+  import type { main } from "../wailsjs/go/models";
+  import { folders, selectedFolder } from "./store.js";
 
-  let selectedFolder = null;
+  const NEW_FOLDER_DEFAULT_NAME = "Untitled folder";
 
-  let folders: main.Folder[] = [];
- 
   function selectFolder(folder) {
-    console.log('Selecting folder', folder)
-    selectedFolder = folder;
-  }
-
-  async function getAllFolders(): Promise<main.Folder[]> {
-    return await GetAllFolders();
+    selectedFolder.set(folder);
   }
 
   async function createFolder() {
-    console.log("Creating a new folder");
-    const createdFolder: main.Folder = await CreateFolder("new folder");
-    console.log("Created now folder !", createdFolder.name, ". Refreshing...");
-    refreshFolders();
-  }
-
-  function refreshFolders(): void {
-    getAllFolders().then((fetchedFolders) => (folders = fetchedFolders));
+    await CreateFolder(NEW_FOLDER_DEFAULT_NAME);
+    folders.refresh();
   }
 
   function deleteFolder(folder: main.Folder) {
-    console.log('Deleting folder', folder)
-    DeleteFolder(folder.id)
-    refreshFolders(); 
+    DeleteFolder(folder.id);
+    folders.refresh();
   }
 
-  onMount(() => {
-    refreshFolders();
+  onMount(async () => {
+    await folders.refresh();
+
+    if (get(folders).length > 0) {
+      console.log("selecting", get(folders)[0]);
+      selectedFolder.set(get(folders)[0]);
+    }
   });
 </script>
 
@@ -53,34 +48,62 @@
       w: "16rem",
       color: "text-gray-700",
       fontWeight: "bold",
+      display: "flex",
+      alignItems: "center",
     })}
   >
-        Folders
+    <span class={css({ flex: 1 })}>Folders</span>
+
+    <button
+      on:click={createFolder}
+      class={css({
+        _hover: { bg: "gray.700" },
+        py: "0.1rem",
+        px: "0.2rem",
+        cursor: "pointer",
+        borderRadius: "0.4rem",
+      })}
+    >
+      <IconAdd />
+    </button>
   </div>
 
-  <button on:click={createFolder} class={css({
-    color: "white",
-  })}> Create a new folder 
-</button>
-
   <ul class={css({ mt: "2" })}>
-    {#each folders as folder}
-      <li
+    {#if $folders && $folders.length > 0}
+      {#each $folders as folder}
+        <li
+          class={css({
+            cursor: "pointer",
+            py: "1",
+            px: "4",
+            bg: {
+              base: $selectedFolder?.id === folder.id ? "#424453" : "",
+              _hover: $selectedFolder?.id === folder.id ? "" : "#373947",
+            },
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          })}
+          on:click={() => selectFolder(folder)}
+        >
+          <span>{folder.name}</span>
+          <button on:click|stopPropagation={() => deleteFolder(folder)} class={css({
+            cursor: "pointer"
+          })}>
+            <IconClose />
+          </button>
+        </li>
+      {/each}
+    {:else}
+      <p
         class={css({
-          cursor: "pointer",
           py: "1",
           px: "4",
-          bg: { _hover: "#373947" },
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+          color: "gray.600",
         })}
-        on:click={() => selectFolder(folder)}
-        class:font-bold={folder === selectedFolder}
       >
-        <span>{folder.name}</span>
-        <button on:click|stopPropagation={() => deleteFolder(folder)}>X</button>
-      </li>
-    {/each}
+        No folders found.
+      </p>
+    {/if}
   </ul>
 </div>

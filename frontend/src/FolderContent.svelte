@@ -1,17 +1,48 @@
-<script>
+<script lang="ts">
+  import type { main } from "wailsjs/go/models.js";
+  import IconAdd from "~icons/material-symbols/add";
+  import IconClose from "~icons/material-symbols/close";
   import { css } from "../styled-system/css";
+  import { CreateFile, DeleteFile } from "../wailsjs/go/main/App.js";
+  import { folders, selectedFile, selectedFolder } from "./store.js";
+  import { onDestroy, onMount } from "svelte";
+  import { get } from "svelte/store";
 
-  let files = [
-    { id: 1, name: "File 1" },
-    { id: 2, name: "File 2" },
-    { id: 3, name: "File 3" },
-  ];
+  let files: main.File[] = [];
 
-  let selectedFile = null;
+  const NEW_FOLDER_DEFAULT_NAME = "Untitled file";
 
   function selectFile(file) {
-    selectedFile = file;
+    selectedFile.set(file);
   }
+
+  async function createFile() {
+    await CreateFile(NEW_FOLDER_DEFAULT_NAME, "txt", null, $selectedFolder.id);
+    folders.refresh();
+  }
+
+  function deleteFile(file: main.File) {
+    DeleteFile(file.id);
+    folders.refresh();
+  }
+
+  onMount(async () => {
+    selectedFolder.subscribe((folder) => {
+      // TODO: unsub
+      if (folder === null) {
+        return;
+      }
+
+      files = folder.files;
+
+      if (get(selectedFile) === null || files?.length > 0 || get(selectedFile)?.folderId !== folder.id) {
+        console.log("selecting file", files[0]);
+        selectedFile.set(files[0]);
+      }
+    });
+  });
+  
+
 </script>
 
 <div
@@ -19,33 +50,74 @@
     display: "flex",
     flexDir: "column",
     w: "100%",
-    bg: '#292b37',
+    bg: "#292b37",
   })}
 >
   <div
     class={css({
       py: "2px",
       px: "4px",
+      w: "16rem",
       color: "text-gray-700",
       fontWeight: "bold",
+      display: "flex",
+      alignItems: "center",
     })}
   >
-    Files
+    <span class={css({ flex: 1 })}>Files</span>
+
+    <button
+      on:click={createFile}
+      class={css({
+        _hover: { bg: "gray.700" },
+        py: "0.1rem",
+        px: "0.2rem",
+        cursor: "pointer",
+        borderRadius: "0.4rem",
+      })}
+    >
+      <IconAdd />
+    </button>
   </div>
   <ul class={css({ mt: "2" })}>
-    {#each files as file}
-      <li
-      class={css({
-        cursor: "pointer",
-        py: "1",
-        px: "4",
-        bg: { _hover: "#4a4d5f" },
-      })}
-        on:click={() => selectFile(file)}
-        class:font-bold={file === selectedFile}
+    {#if $selectedFile !== null && files && files.length > 0}
+      {#each files as file}
+        <li
+          class={css({
+            cursor: "pointer",
+            py: "1",
+            px: "4",
+            bg: {
+              base: $selectedFile.id === file.id ? "#424453" : "",
+              _hover: $selectedFile.id === file.id ? "" : "#373947",
+            },
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          })}
+          on:click={() => selectFile(file)}
+        >
+          <span>{file.name}</span>
+          <button
+            on:click|stopPropagation={() => deleteFile(file)}
+            class={css({
+              cursor: "pointer",
+            })}
+          >
+            <IconClose />
+          </button>
+        </li>
+      {/each}
+    {:else}
+      <p
+        class={css({
+          py: "1",
+          px: "4",
+          color: "gray.600",
+        })}
       >
-        {file.name}
-      </li>
-    {/each}
+        No files found.
+      </p>
+    {/if}
   </ul>
 </div>

@@ -10,6 +10,10 @@ export function CreateFolder(arg1) {
   return window['go']['main']['App']['CreateFolder'](arg1);
 }
 
+export function DeleteFile(arg1) {
+  return window['go']['main']['App']['DeleteFile'](arg1);
+}
+
 export function DeleteFolder(arg1) {
   return window['go']['main']['App']['DeleteFolder'](arg1);
 }
@@ -20,6 +24,10 @@ export function GetAllFolders() {
 
 export function GetFile(arg1) {
   return window['go']['main']['App']['GetFile'](arg1);
+}
+
+export function GetFolder(arg1) {
+  return window['go']['main']['App']['GetFolder'](arg1);
 }
 
 export function Greet(arg1) {
