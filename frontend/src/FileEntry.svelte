@@ -41,7 +41,7 @@
 
     if (evt.key === "Enter") {
       evt.preventDefault();
-      const newFilename = evt.target.outerText; // TODO sanitize
+      const newFilename = evt.target['outerText']; // TODO sanitize
       if (newFilename !== "") {
         UpdateFileName(file.id, newFilename);
         await folders.refresh();

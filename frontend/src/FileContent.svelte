@@ -4,7 +4,7 @@
   import { javascript } from "@codemirror/lang-javascript";
   import { oneDark } from "@codemirror/theme-one-dark";
   import { folders, selectedFile } from "./store";
-  import { UpdateFile } from "../wailsjs/go/main/App";
+  import { UpdateFileContent } from "../wailsjs/go/main/App";
   import { get } from "svelte/store";
 
   let fileContent = "";
@@ -16,11 +16,14 @@
   });
 
   async function saveFile() {
-    const { id, name, extension, folderId } = get(selectedFile);
-    await UpdateFile(id, name, extension, fileContent, folderId);
+    // TODO ctrl+S to save
+    const { id } = get(selectedFile);
+    await UpdateFileContent(id, fileContent); // todo UpdateFileContent
     isFileContentDirty = false;
     folders.refresh();
   }
+
+  // TODO file type
 </script>
 
 <div
@@ -58,7 +61,7 @@
         justifyContent: "space-between",
       })}
     >
-      File Content (title)
+      File Content (title) is drty = {isFileContentDirty}
 
       <button
         on:click={saveFile}
@@ -73,7 +76,7 @@
           pr: "4",
           ml: "auto",
           rounded: "rounded",
-          cursor: "pointer",
+          cursor: isFileContentDirty ? "pointer" : "",
           borderRadius: "0.4rem",
         })}
         disabled={!isFileContentDirty}

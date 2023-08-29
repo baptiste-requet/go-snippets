@@ -38,6 +38,10 @@ export function UpdateFile(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['main']['App']['UpdateFile'](arg1, arg2, arg3, arg4, arg5);
 }
 
+export function UpdateFileContent(arg1, arg2) {
+  return window['go']['main']['App']['UpdateFileContent'](arg1, arg2);
+}
+
 export function UpdateFileName(arg1, arg2) {
   return window['go']['main']['App']['UpdateFileName'](arg1, arg2);
 }

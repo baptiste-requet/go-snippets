@@ -13,7 +13,9 @@
   const NEW_FOLDER_DEFAULT_NAME = "Untitled file";
 
   function selectFile(file) {
-    selectedFile.set(file);
+    if (get(selectedFile)?.id !== file.id) {
+      selectedFile.set(file);
+    }
   }
 
   async function createFile() {
@@ -111,7 +113,7 @@
           >
             <IconClose />
           </button> -->
-          <FileEntry file={file} />
+          <FileEntry {file} />
         </li>
       {/each}
     {:else}
