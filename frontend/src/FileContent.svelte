@@ -8,11 +8,14 @@
   import { get } from "svelte/store";
 
   let fileContent = "";
+  let fileExtension = "";
   let isFileContentDirty = false;
 
   selectedFile.subscribe((selectedFile) => {
     fileContent = selectedFile?.content || "";
     isFileContentDirty = false;
+    console.log('ext', selectedFile?.extension )
+    fileExtension = selectedFile?.extension || ""
   });
 
   async function saveFile() {
@@ -21,6 +24,10 @@
     await UpdateFileContent(id, fileContent); // todo UpdateFileContent
     isFileContentDirty = false;
     folders.refresh();
+  }
+
+  const extensionToCodeMirrorLang = {
+    'js': javascript(),
   }
 
   // TODO file type
@@ -43,9 +50,6 @@
         w: "100%",
         color: "text-gray-700",
         fontWeight: "bold",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
       })}
     />
   {:else}
@@ -61,12 +65,13 @@
         justifyContent: "space-between",
       })}
     >
-      File Content (title) is drty = {isFileContentDirty}
+      <!-- {$selectedFile.name}.{$selectedFile.extension} -->
+      File Content
 
       <button
         on:click={saveFile}
         class={css({
-          bgColor: isFileContentDirty ? "blue.500" : "gray.500",
+          bgColor: isFileContentDirty ? "blue.500" : "slate.700",
           _hover: { bgColor: isFileContentDirty ? "blue.700" : "" },
           color: "white",
           fontWeight: "bold",
@@ -94,7 +99,7 @@
         overflow: "auto",
       })}
       theme={oneDark}
-      lang={javascript()}
+      lang={extensionToCodeMirrorLang[fileExtension]}
       styles={{
         "&": {
           maxWidth: "100%",

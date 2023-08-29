@@ -41,6 +41,9 @@
       ) {
         console.log("Selected file to null");
         selectedFile.set(null);
+      } else {
+        console.log("updating selected folder to same")
+        selectedFile.set(folder.files.find((file) => file.id === get(selectedFile)?.id))
       }
     });
   });
