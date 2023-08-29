@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { css } from "../styled-system/css";
+  import { tick } from "svelte";
   import type { main } from "wailsjs/go/models";
   import IconClose from "~icons/material-symbols/close";
+  import { css } from "../styled-system/css";
   import { DeleteFile, UpdateFileName } from "../wailsjs/go/main/App";
   import { folders } from "./store";
-  import { tick } from "svelte";
 
   export let file: main.File;
 
@@ -13,37 +13,53 @@
     folders.refresh();
   }
 
-  let editableFile: main.File = null;
+  let isInEdition = false;
 
-  let nameInputRef;
+  let nameInputRef: HTMLDivElement | null;
 
-  async function handleDblClickOnFileName(evt: MouseEvent, file: main.File) {
-    editableFile = file;
-    console.log("File in edit mode", editableFile);
+  async function handleDblClickOnFileName() {
+    isInEdition = true;
 
     await tick();
 
-    nameInputRef.focus()
-    nameInputRef.select()
+    nameInputRef.focus();
+
+    // Select all text in the div element
+    let range = document.createRange();
+    range.selectNodeContents(nameInputRef);
+    let sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  async function handleBlur() {
+    isInEdition = false;
   }
 
   async function handleKeydownOnFileName(evt: KeyboardEvent) {
-    if (editableFile === null) return;
+    if (isInEdition === false) return;
 
     if (evt.key === "Enter") {
-      UpdateFileName(editableFile.id, evt.target.outerText);
-      await folders.refresh();
-      editableFile = null;
+      evt.preventDefault();
+      const newFilename = evt.target.outerText; // TODO sanitize
+      if (newFilename !== "") {
+        UpdateFileName(file.id, newFilename);
+        await folders.refresh();
+      }
+      isInEdition = false;
     }
   }
 </script>
 
 <div
-  class={css({ flex: 1 })}
-  on:dblclick={(evt) => handleDblClickOnFileName(evt, file)}
+  class={css({
+    flex: 1,
+    marginRight: "100px",
+  })}
+  on:dblclick={handleDblClickOnFileName}
   on:keydown={handleKeydownOnFileName}
-  on:focus={event => file.id === editableFile?.id ? event.target.select() : null}
-  contenteditable={file.id === editableFile?.id}
+  on:blur={handleBlur}
+  contenteditable={isInEdition}
   bind:this={nameInputRef}
 >
   {file.name}
