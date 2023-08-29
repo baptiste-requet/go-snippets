@@ -15,8 +15,6 @@ type FoldersStore = {
 export const folders = ((): FoldersStore => {
   const { subscribe, set, update } = writable<main.Folder[]>([]);
 
-  const a = subscribe((v) => v);
-
   return {
     subscribe,
     set,
@@ -44,7 +42,7 @@ type FolderStore = {
 export const selectedFolder = ((): FolderStore => {
   const { subscribe, set, update } = writable<main.Folder>(null);
 
-  const foldersSubs = folders.subscribe((folders) => {
+  folders.subscribe((folders) => {
     if (folders === null || folders.length === 0 || get(selectedFolder) === null) {
       return;
     }

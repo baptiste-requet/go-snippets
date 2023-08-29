@@ -28,21 +28,18 @@
 
   onMount(async () => {
     selectedFolder.subscribe((folder) => {
-      // TODO: unsub
       if (folder === null) {
         return;
       }
 
       files = folder.files;
 
-      if (get(selectedFile) === null || files?.length > 0 || get(selectedFile)?.folderId !== folder.id) {
-        console.log("selecting file", files[0]);
+      if (get(selectedFile)?.folderId !== folder.id && files?.length > 0) {
+        console.log("selecting file", files[0], "previous", get(selectedFile));
         selectedFile.set(files[0]);
       }
     });
   });
-  
-
 </script>
 
 <div
