@@ -62,7 +62,7 @@ folders.subscribe((folders) => {
     selectedFolder.set(folders[0]);
   } else {
     console.log("updating selected folder");
-    selectedFolder.set(folders.find((f) => f.id === get(selectedFolder).id));
+    selectedFolder.set(folders.find((f) => f.id === get(selectedFolder).id) ?? null);
   }
 });
 

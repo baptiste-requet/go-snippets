@@ -13,7 +13,7 @@
   let isInEdition = false;
   let inputEntryName: string;
 
-  let nameInputRef: HTMLDivElement | null;
+  let nameInputRef: HTMLDivElement;
 
   async function handleDblClickOnFileName() {
     inputEntryName = entry.name;

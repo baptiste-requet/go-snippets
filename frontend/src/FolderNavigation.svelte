@@ -9,6 +9,7 @@
   } from "../wailsjs/go/main/App.js";
   import NavEntry from "./NavEntry.svelte";
   import { folders, selectedFolder } from "./store.js";
+  import { get } from "svelte/store";
 
   const NEW_FOLDER_DEFAULT_NAME = "Untitled folder";
 
@@ -18,7 +19,8 @@
 
   async function createFolder() {
     await CreateFolder(NEW_FOLDER_DEFAULT_NAME);
-    folders.refresh();
+    await folders.refresh();
+    selectFolder(get(folders).at(-1));
   }
 
   function deleteFolder(folderId: number) {

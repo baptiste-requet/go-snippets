@@ -24,7 +24,8 @@
 
   async function createFile() {
     await CreateFile(NEW_FOLDER_DEFAULT_NAME, "txt", null, $selectedFolder.id);
-    folders.refresh();
+    await folders.refresh();
+    selectFile(get(selectedFolder).files.at(-1));
   }
 
   function deleteFile(fileId: number) {
@@ -32,7 +33,10 @@
     folders.refresh();
   }
 
-  async function updateFileName(fileId: number, newFileName: string): Promise<void> {
+  async function updateFileName(
+    fileId: number,
+    newFileName: string
+  ): Promise<void> {
     await UpdateFileName(fileId, newFileName);
     return folders.refresh();
   }
@@ -40,6 +44,7 @@
   onMount(async () => {
     selectedFolder.subscribe((folder) => {
       if (folder === null) {
+        console.log("null folder");
         files = [];
         selectedFile.set(null);
         return;
@@ -48,20 +53,22 @@
       files = folder.files;
 
       if (get(selectedFile)?.folderId !== folder.id && files?.length > 0) {
-        console.log("selecting file", files[0], "previous", get(selectedFile));
+        console.log("selecting file", files[0]);
         selectedFile.set(files[0]);
       } else if (
-        folder.files.find((file) => file.id === get(selectedFile)?.id) === null
+        folder.files.find((file) => file.id === get(selectedFile)?.id) ===
+        undefined
       ) {
         console.log("Selected file to null");
         selectedFile.set(null);
-      } else {
-        // console.log("updating selected folder to same") // TODO when dealt with local change persistence
-        // const {name} = folder.files.find((file) => file.id === get(selectedFile)?.id)
-        // selectedFile.update(selectFile => folder.files.find((file) => file.id === get(selectedFile)?.id))
       }
     });
   });
+
+  function init(element) {
+    console.log("init", element);
+    element.focus();
+  }
 </script>
 
 <div
@@ -117,6 +124,7 @@
           })}
           on:click={() => selectFile(file)}
         >
+          <!-- TODO: selectFile -> set selected as true, then do whatever : local selectedFileEntry subscriable -->
           <NavEntry
             entry={file}
             deleteEntry={deleteFile}
