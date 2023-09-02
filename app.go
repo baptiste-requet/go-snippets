@@ -50,6 +50,13 @@ func (a *App) CreateFolder(name string) Folder {
 	return folder
 }
 
+func (a *App) UpdateFolderName(id uint, name string) {
+	var folder Folder
+	a.db.First(&folder, id)
+	folder.Name = name
+	a.db.Save(&folder)
+}
+
 func (a *App) GetFolder(folderID uint) Folder {
 	var folder Folder
 	a.db.Preload("Files").Find(&folder, folderID)

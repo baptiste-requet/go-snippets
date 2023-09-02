@@ -25,3 +25,5 @@ export function UpdateFile(arg1:number,arg2:string,arg3:string,arg4:string,arg5:
 export function UpdateFileContent(arg1:number,arg2:string):Promise<void>;
 
 export function UpdateFileName(arg1:number,arg2:string):Promise<void>;
+
+export function UpdateFolderName(arg1:number,arg2:string):Promise<void>;

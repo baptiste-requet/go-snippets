@@ -9,7 +9,7 @@ type FoldersStore = {
   update: (
     updater: (value: main.Folder[] | null) => main.Folder[] | null
   ) => void;
-  refresh: () => void;
+  refresh: () => Promise<void>;
 };
 
 export const folders = ((): FoldersStore => {

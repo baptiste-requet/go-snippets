@@ -1,11 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { get } from "svelte/store";
   import IconAdd from "~icons/material-symbols/add";
-  import IconClose from "~icons/material-symbols/close";
   import { css } from "../styled-system/css";
-  import { CreateFolder, DeleteFolder } from "../wailsjs/go/main/App.js";
-  import type { main } from "../wailsjs/go/models";
+  import {
+    CreateFolder,
+    DeleteFolder,
+    UpdateFolderName,
+  } from "../wailsjs/go/main/App.js";
+  import NavEntry from "./NavEntry.svelte";
   import { folders, selectedFolder } from "./store.js";
 
   const NEW_FOLDER_DEFAULT_NAME = "Untitled folder";
@@ -19,9 +21,14 @@
     folders.refresh();
   }
 
-  function deleteFolder(folder: main.Folder) {
-    DeleteFolder(folder.id);
+  function deleteFolder(folderId: number) {
+    DeleteFolder(folderId);
     folders.refresh();
+  }
+
+  async function updateFolderName(folderId: number, newFolderName: string): Promise<void> {
+    await UpdateFolderName(folderId, newFolderName);
+    return folders.refresh();
   }
 
   onMount(async () => {
@@ -82,12 +89,11 @@
           })}
           on:click={() => selectFolder(folder)}
         >
-          <span>{folder.name}</span>
-          <button on:click|stopPropagation={() => deleteFolder(folder)} class={css({
-            cursor: "pointer"
-          })}>
-            <IconClose />
-          </button>
+          <NavEntry
+            entry={folder}
+            deleteEntry={deleteFolder}
+            updateEntryName={updateFolderName}
+          />
         </li>
       {/each}
     {:else}

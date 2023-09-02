@@ -71,8 +71,11 @@
       <button
         on:click={saveFile}
         class={css({
-          bgColor: isFileContentDirty ? "blue.500" : "slate.700",
-          _hover: { bgColor: isFileContentDirty ? "blue.700" : "" },
+          bg: {
+            base: "blue.500",
+            _hover: "blue.700",
+            _disabled: "gray.500"
+          },
           color: "white",
           fontWeight: "bold",
           pt: "2",

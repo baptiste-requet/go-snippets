@@ -4,8 +4,12 @@
   import type { main } from "wailsjs/go/models.js";
   import IconAdd from "~icons/material-symbols/add";
   import { css } from "../styled-system/css";
-  import { CreateFile } from "../wailsjs/go/main/App.js";
-  import FileEntry from "./FileEntry.svelte";
+  import {
+    CreateFile,
+    DeleteFile,
+    UpdateFileName,
+  } from "../wailsjs/go/main/App.js";
+  import NavEntry from "./NavEntry.svelte";
   import { folders, selectedFile, selectedFolder } from "./store.js";
 
   let files: main.File[] = [];
@@ -21,6 +25,16 @@
   async function createFile() {
     await CreateFile(NEW_FOLDER_DEFAULT_NAME, "txt", null, $selectedFolder.id);
     folders.refresh();
+  }
+
+  function deleteFile(fileId: number) {
+    DeleteFile(fileId);
+    folders.refresh();
+  }
+
+  async function updateFileName(fileId: number, newFileName: string): Promise<void> {
+    await UpdateFileName(fileId, newFileName);
+    return folders.refresh();
   }
 
   onMount(async () => {
@@ -42,8 +56,9 @@
         console.log("Selected file to null");
         selectedFile.set(null);
       } else {
-        console.log("updating selected folder to same")
-        selectedFile.set(folder.files.find((file) => file.id === get(selectedFile)?.id))
+        // console.log("updating selected folder to same") // TODO when dealt with local change persistence
+        // const {name} = folder.files.find((file) => file.id === get(selectedFile)?.id)
+        // selectedFile.update(selectFile => folder.files.find((file) => file.id === get(selectedFile)?.id))
       }
     });
   });
@@ -102,7 +117,11 @@
           })}
           on:click={() => selectFile(file)}
         >
-          <FileEntry {file} />
+          <NavEntry
+            entry={file}
+            deleteEntry={deleteFile}
+            updateEntryName={updateFileName}
+          />
         </li>
       {/each}
     {:else}

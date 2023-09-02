@@ -49,3 +49,7 @@ export function UpdateFileContent(arg1, arg2) {
 export function UpdateFileName(arg1, arg2) {
   return window['go']['main']['App']['UpdateFileName'](arg1, arg2);
 }
+
+export function UpdateFolderName(arg1, arg2) {
+  return window['go']['main']['App']['UpdateFolderName'](arg1, arg2);
+}
