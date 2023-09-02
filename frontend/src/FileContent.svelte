@@ -12,10 +12,10 @@
   let isFileContentDirty = false;
 
   selectedFile.subscribe((selectedFile) => {
-    fileContent = selectedFile?.content || "";
     isFileContentDirty = false;
-    console.log('ext', selectedFile?.extension )
+    fileContent = selectedFile?.content || "";
     fileExtension = selectedFile?.extension || ""
+    console.log('file extension:', fileExtension )
   });
 
   async function saveFile() {
@@ -24,6 +24,13 @@
     await UpdateFileContent(id, fileContent); // todo UpdateFileContent
     isFileContentDirty = false;
     folders.refresh();
+  }
+
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.ctrlKey && event.key === 's') {
+      event.preventDefault();
+      saveFile();
+    }
   }
 
   const extensionToCodeMirrorLang = {
@@ -41,6 +48,7 @@
     minHeight: 0,
     minWidth: 0,
   })}
+  on:keydown={handleKeyDown}
 >
   {#if $selectedFile === null}
     <div
