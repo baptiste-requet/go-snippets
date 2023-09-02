@@ -38,6 +38,12 @@
   }
 
   // TODO file type
+  let codeMirroRef: any;
+  function printCodeMirror() {
+    if (codeMirroRef) {
+      console.log('code mirror ref', codeMirroRef)
+    }
+  }
 </script>
 
 <div
@@ -66,16 +72,13 @@
         py: "0.4rem",
         px: "0.8rem",
         w: "100%",
-        color: "text-gray-700",
-        fontWeight: "bold",
+        color: "gray.300",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
       })}
     >
-      <!-- {$selectedFile.name}.{$selectedFile.extension} -->
-      File Content
-
+      
       <button
         on:click={saveFile}
         class={css({
@@ -103,7 +106,12 @@
 
     <CodeMirror
       bind:value={fileContent}
-      on:change={() => (isFileContentDirty = true)}
+      bind:this={codeMirroRef}
+      on:click={(event) => console.log("custom event", event)}
+      on:change={(event) => {
+        console.log('change event', event)
+        printCodeMirror()
+      isFileContentDirty = true}}
       class={css({
         maxHeight: "100%",
         flex: 1,
@@ -120,4 +128,15 @@
       }}
     />
   {/if}
+
+  <div class={css({
+    py: "0.4rem",
+    px: "0.8rem",
+    w: "100%",
+    color: "text-gray-700",
+    bg: "#282c34",
+  })}>
+    {$selectedFile?.extension ?? 'No extension'}
+  </div>
+
 </div>

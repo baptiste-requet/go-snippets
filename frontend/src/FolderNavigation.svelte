@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { get } from "svelte/store";
   import IconAdd from "~icons/material-symbols/add";
+  import IconFolder from "~icons/material-symbols/folder";
   import { css } from "../styled-system/css";
   import {
     CreateFolder,
@@ -9,7 +11,6 @@
   } from "../wailsjs/go/main/App.js";
   import NavEntry from "./NavEntry.svelte";
   import { folders, selectedFolder } from "./store.js";
-  import { get } from "svelte/store";
 
   const NEW_FOLDER_DEFAULT_NAME = "Untitled folder";
 
@@ -28,7 +29,10 @@
     folders.refresh();
   }
 
-  async function updateFolderName(folderId: number, newFolderName: string): Promise<void> {
+  async function updateFolderName(
+    folderId: number,
+    newFolderName: string
+  ): Promise<void> {
     await UpdateFolderName(folderId, newFolderName);
     return folders.refresh();
   }
@@ -91,6 +95,7 @@
           })}
           on:click={() => selectFolder(folder)}
         >
+          <IconFolder />
           <NavEntry
             entry={folder}
             deleteEntry={deleteFolder}

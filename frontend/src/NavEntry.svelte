@@ -64,6 +64,7 @@
     class={css({
       flex: 1,
       marginRight: "1rem",
+      ml: "0.5rem"
     })}
     on:dblclick={handleDblClickOnFileName}
   >
