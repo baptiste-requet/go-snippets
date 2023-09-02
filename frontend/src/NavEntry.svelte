@@ -11,7 +11,6 @@
   export let updateEntryName: (id: number, newEntryName: string) => Promise<void>;
 
   let isInEdition = false;
-  let displayEntryName = entry.name;
   let inputEntryName: string;
 
   let nameInputRef: HTMLDivElement | null;
@@ -27,7 +26,6 @@
 
   function handleBlur() {
     isInEdition = false;
-    displayEntryName = entry.name;
   }
 
   function handleInputFocus(event: any) {
@@ -41,7 +39,6 @@
       event.preventDefault();
       if (inputEntryName !== "" && inputEntryName !== entry.name) {
         await updateEntryName(entry.id, inputEntryName);
-        displayEntryName = inputEntryName;
       }
       isInEdition = false;
     }
@@ -53,6 +50,8 @@
     class={css({
       flex: 1,
       marginRight: "1rem",
+      bg: "#252a32",
+      color: "white"
     })}
     on:blur={handleBlur}
     on:keydown={handleKeydownOnFileName}
